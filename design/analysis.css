@@ -1,0 +1,74 @@
+/* Analysis screen styles */
+.analysis-scroll {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 60px;
+}
+
+.keyword-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    margin-bottom: 20px;
+}
+
+.peak-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.peak-icon-container {
+    width: 48px;
+    height: 48px;
+    background: rgba(139, 92, 246, 0.15);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--accent-violet);
+    font-size: 20px;
+}
+
+.peak-meta-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.peak-meta-value {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.chart-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.chart-box {
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(30, 41, 59, 0.3);
+}
+
+.chart-svg {
+    width: 100%;
+    height: 220px;
+}
+
+.chart-axis-label {
+    fill: var(--text-secondary);
+    font-size: 10px;
+    font-family: var(--font-primary);
+}
