@@ -6,10 +6,39 @@ import '../../core/theme/app_theme.dart';
 import '../bloc/analysis/analysis_bloc.dart';
 import '../bloc/analysis/analysis_state.dart';
 
-class AnalysisScreen extends StatelessWidget {
+class AnalysisScreen extends StatefulWidget {
   final String keyword;
 
   const AnalysisScreen({this.keyword = '', super.key});
+
+  @override
+  State<AnalysisScreen> createState() => _AnalysisScreenState();
+}
+
+class _AnalysisScreenState extends State<AnalysisScreen> {
+  late PageController _pageController;
+  int _currentIndex = 0;
+  final int _diagramCount = 3;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start at a large index divisible by 3 for infinite swiping both ways
+    _pageController = PageController(initialPage: 999);
+    _currentIndex = 0;
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index % _diagramCount;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +86,7 @@ class AnalysisScreen extends StatelessWidget {
                             SizedBox(height: 16),
                             Text(
                               'Please perform a search in the Search tab to view trends analysis.',
-                              textAlign: Center,
+                              textAlign: TextAlign.center,
                               style: TextStyle(color: AppTheme.textSecondary),
                             ),
                           ],
@@ -92,7 +121,7 @@ class AnalysisScreen extends StatelessWidget {
                         );
                       }
 
-                      return _buildTrendAnalysis(context, state.trendData, state.keyword);
+                      return _buildCarouselContent(context, state);
                     }
 
                     return const SizedBox.shrink();
@@ -106,14 +135,122 @@ class AnalysisScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrendAnalysis(BuildContext context, Map<int, int> trendData, String keyword) {
+  Widget _buildCarouselContent(BuildContext context, AnalysisSuccess state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Topic Keyword tag centered
+        Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryNeon.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppTheme.primaryNeon.withOpacity(0.3)),
+            ),
+            child: Text(
+              'Keyword: ${state.keyword}',
+              style: const TextStyle(
+                color: AppTheme.primaryNeon,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Carousel Slider wrapper
+        Expanded(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Swipable PageView
+              PageView.builder(
+                controller: _pageController,
+                onPageChanged: _onPageChanged,
+                itemBuilder: (context, index) {
+                  final pageIndex = index % _diagramCount;
+                  if (pageIndex == 0) {
+                    return _buildPublicationTrendSlide(context, state.trendData, state.keyword);
+                  } else if (pageIndex == 1) {
+                    return _buildTopKeywordsSlide(context, state.topKeywords, state.keyword);
+                  } else {
+                    return _buildAuthorImpactSlide(context, state.topAuthors, state.keyword);
+                  }
+                },
+              ),
+
+              // Left navigation arrow button
+              Positioned(
+                left: 0,
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: AppTheme.darkCardBackground.withOpacity(0.8),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(Icons.chevron_left_rounded, color: AppTheme.primaryNeon, size: 24),
+                    onPressed: () {
+                      _pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              // Right navigation arrow button
+              Positioned(
+                right: 0,
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: AppTheme.darkCardBackground.withOpacity(0.8),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(Icons.chevron_right_rounded, color: AppTheme.primaryNeon, size: 24),
+                    onPressed: () {
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Dots Indicator Row
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(_diagramCount, (index) {
+            final isActive = _currentIndex == index;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.symmetric(horizontal: 4.0),
+              height: 8.0,
+              width: isActive ? 16.0 : 8.0,
+              decoration: BoxDecoration(
+                color: isActive ? AppTheme.primaryNeon : AppTheme.borderNeon,
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+
+  // --- Slide 1: Publication Trend (Line Chart) ---
+  Widget _buildPublicationTrendSlide(BuildContext context, Map<int, int> trendData, String keyword) {
     // Sort years to plot line chart chronologically
     final sortedYears = trendData.keys.toList()..sort();
-    
-    // Filter out outliers/unreasonable years (e.g. year 0 or futures)
     final filteredYears = sortedYears.where((year) => year > 1950 && year <= DateTime.now().year).toList();
 
-    // Map to spots
     final List<FlSpot> spots = [];
     double minY = double.infinity;
     double maxY = double.negativeInfinity;
@@ -129,8 +266,7 @@ class AnalysisScreen extends StatelessWidget {
     if (minY == double.infinity) minY = 0;
     if (maxY == double.negativeInfinity) maxY = 100;
 
-    // Peak calculation
-    int peakYear = filteredYears.first;
+    int peakYear = filteredYears.isNotEmpty ? filteredYears.first : 0;
     int maxCount = -1;
     trendData.forEach((year, count) {
       if (year > 1950 && year <= DateTime.now().year && count > maxCount) {
@@ -140,79 +276,58 @@ class AnalysisScreen extends StatelessWidget {
     });
 
     return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Topic tag
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryNeon.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppTheme.primaryNeon.withOpacity(0.3)),
-            ),
-            child: Text(
-              'Keyword: $keyword',
-              style: const TextStyle(
-                color: AppTheme.primaryNeon,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
+          // Diagram metadata header
+          _buildDiagramHeader(title: 'Publication Trend', topic: keyword),
+          const SizedBox(height: 16),
 
-          // Peak metric card
+          // Peak Year Card
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: AppTheme.glassBox(),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: AppTheme.secondaryNeon.withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(FontAwesomeIcons.fire, color: AppTheme.secondaryNeon, size: 20),
+                  child: const Icon(FontAwesomeIcons.fire, color: AppTheme.secondaryNeon, size: 16),
                 ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Peak Research Year',
-                      style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$peakYear ($maxCount publications)',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Peak Research Year',
+                        style: TextStyle(color: AppTheme.textSecondary, fontSize: 11),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 2),
+                      Text(
+                        '$peakYear ($maxCount publications)',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
-          // Chart Section
-          const Text(
-            'Timeline Analysis',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 12),
+          // Chart Box
           Container(
-            height: 280,
-            padding: const EdgeInsets.fromLTRB(10, 24, 20, 10),
+            height: 230,
+            padding: const EdgeInsets.fromLTRB(5, 20, 15, 5),
             decoration: AppTheme.glassBox(
               color: AppTheme.darkCardBackground.withOpacity(0.3),
             ),
@@ -225,11 +340,11 @@ class AnalysisScreen extends StatelessWidget {
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 40,
+                      reservedSize: 35,
                       getTitlesWidget: (value, meta) {
                         return Text(
                           value.toInt().toString(),
-                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10),
+                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 9),
                         );
                       },
                     ),
@@ -237,15 +352,14 @@ class AnalysisScreen extends StatelessWidget {
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 24,
+                      reservedSize: 20,
                       getTitlesWidget: (value, meta) {
                         final idx = value.toInt();
                         if (idx >= 0 && idx < filteredYears.length) {
-                          // Show title only for first, last, and middle points to prevent overlap
                           if (idx == 0 || idx == filteredYears.length - 1 || idx == (filteredYears.length / 2).floor()) {
                             return Text(
                               filteredYears[idx].toString(),
-                              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10),
+                              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 9),
                             );
                           }
                         }
@@ -256,7 +370,7 @@ class AnalysisScreen extends StatelessWidget {
                 ),
                 borderData: FlBorderData(show: false),
                 minX: 0,
-                maxX: (filteredYears.length - 1).toDouble(),
+                maxX: filteredYears.isNotEmpty ? (filteredYears.length - 1).toDouble() : 0,
                 minY: minY * 0.9,
                 maxY: maxY * 1.1,
                 lineBarsData: [
@@ -266,15 +380,15 @@ class AnalysisScreen extends StatelessWidget {
                     gradient: const LinearGradient(
                       colors: [AppTheme.primaryNeon, AppTheme.secondaryNeon],
                     ),
-                    barWidth: 4,
+                    barWidth: 3,
                     isStrokeCapRound: true,
                     dotData: const FlDotData(show: false),
                     belowBarData: BarAreaData(
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          AppTheme.primaryNeon.withOpacity(0.2),
-                          AppTheme.secondaryNeon.withOpacity(0.02),
+                          AppTheme.primaryNeon.withOpacity(0.15),
+                          AppTheme.secondaryNeon.withOpacity(0.01),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -285,7 +399,204 @@ class AnalysisScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+        ],
+      ),
+    );
+  }
+
+  // --- Slide 2: Top Keywords (Horizontal Bars) ---
+  Widget _buildTopKeywordsSlide(BuildContext context, List<Map<String, dynamic>> keywordsData, String keyword) {
+    // Take top 5 keywords to avoid list cluttering
+    final topList = keywordsData.take(5).toList();
+    final maxCount = topList.isNotEmpty ? (topList.first['count'] as int? ?? 100).toDouble() : 100.0;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDiagramHeader(title: 'Top Keywords', topic: keyword),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: AppTheme.glassBox(
+              color: AppTheme.darkCardBackground.withOpacity(0.4),
+            ),
+            child: topList.isEmpty
+                ? const Center(child: Text('No keywords available', style: TextStyle(color: AppTheme.textSecondary)))
+                : Column(
+                    children: topList.map((data) {
+                      final name = data['key_display_name']?.toString() ?? 'Unknown';
+                      final count = data['count'] as int? ?? 0;
+                      final ratio = maxCount > 0 ? count / maxCount : 0.0;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                  ),
+                                ),
+                                Text(
+                                  '$count papers',
+                                  style: const TextStyle(
+                                    color: AppTheme.secondaryNeon,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Container(
+                              height: 10,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: AppTheme.borderNeon.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: FractionallySizedBox(
+                                  widthFactor: ratio.clamp(0.05, 1.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      gradient: const LinearGradient(
+                                        colors: [AppTheme.primaryNeon, AppTheme.secondaryNeon],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- Slide 3: Author Impact (Horizontal Bars) ---
+  Widget _buildAuthorImpactSlide(BuildContext context, List<Map<String, dynamic>> authorsData, String keyword) {
+    // Take top 5 authors to avoid list cluttering
+    final topList = authorsData.take(5).toList();
+    final maxCount = topList.isNotEmpty ? (topList.first['count'] as int? ?? 100).toDouble() : 100.0;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDiagramHeader(title: 'Author Impact', topic: keyword),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: AppTheme.glassBox(
+              color: AppTheme.darkCardBackground.withOpacity(0.4),
+            ),
+            child: topList.isEmpty
+                ? const Center(child: Text('No authors available', style: TextStyle(color: AppTheme.textSecondary)))
+                : Column(
+                    children: topList.map((data) {
+                      final name = data['key_display_name']?.toString() ?? 'Unknown';
+                      final count = data['count'] as int? ?? 0;
+                      final ratio = maxCount > 0 ? count / maxCount : 0.0;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                  ),
+                                ),
+                                Text(
+                                  '$count papers',
+                                  style: const TextStyle(
+                                    color: AppTheme.secondaryNeon,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Container(
+                              height: 10,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: AppTheme.borderNeon.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: FractionallySizedBox(
+                                  widthFactor: ratio.clamp(0.05, 1.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      gradient: const LinearGradient(
+                                        colors: [AppTheme.primaryNeon, AppTheme.secondaryNeon],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDiagramHeader({required String title, required String topic}) {
+    return Center(
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.primaryNeon,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            topic,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.textSecondary,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
         ],
       ),
     );

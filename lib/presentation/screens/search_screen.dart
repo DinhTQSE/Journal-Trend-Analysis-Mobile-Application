@@ -171,7 +171,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             SizedBox(height: 16),
                             Text(
                               'Search for a topic above or tap a quick chip to start analyzing publications.',
-                              textAlign: Center,
+                              textAlign: TextAlign.center,
                               style: TextStyle(color: AppTheme.textSecondary),
                             ),
                           ],
@@ -196,7 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             const SizedBox(height: 16),
                             Text(
                               state.errorMessage,
-                              textAlign: Center,
+                              textAlign: TextAlign.center,
                               style: const TextStyle(color: AppTheme.textSecondary),
                             ),
                             const SizedBox(height: 16),

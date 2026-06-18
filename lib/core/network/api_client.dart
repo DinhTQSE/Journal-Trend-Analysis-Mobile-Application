@@ -25,7 +25,7 @@ class ApiClient {
       
       final cacheOptions = CacheOptions(
         store: cacheStore,
-        policy: CachePolicy.requestWhenContentIsValid,
+        policy: CachePolicy.request,
         hitCacheOnErrorExcept: [401, 403, 404],
         maxStale: const Duration(days: 7),
         priority: CachePriority.normal,
@@ -38,7 +38,7 @@ class ApiClient {
       // Fallback to memory cache store if path_provider or hive fails (e.g. in test environment)
       final cacheOptions = CacheOptions(
         store: MemCacheStore(),
-        policy: CachePolicy.requestWhenContentIsValid,
+        policy: CachePolicy.request,
         maxStale: const Duration(days: 7),
       );
       dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));

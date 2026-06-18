@@ -57,7 +57,7 @@ class DashboardScreen extends StatelessWidget {
                             SizedBox(height: 16),
                             Text(
                               'Please perform a search in the Search tab to view dashboard analytics.',
-                              textAlign: Center,
+                              textAlign: TextAlign.center,
                               style: TextStyle(color: AppTheme.textSecondary),
                             ),
                           ],
@@ -174,17 +174,44 @@ class DashboardScreen extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Top Contributing Author
-          const Text(
-            'Top Active Author',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
-          ),
-          const SizedBox(height: 8),
-          _buildDetailCard(
-            icon: FontAwesomeIcons.userPen,
-            title: summary.topAuthor?.displayName ?? 'N/A',
-            subtitle: summary.topAuthor != null && summary.topAuthor!.orcid.isNotEmpty
-                ? 'ORCID: ${summary.topAuthor!.orcid.replaceFirst("https://orcid.org/", "")}'
-                : 'No author metadata available.',
+          Builder(
+            builder: (context) {
+              final author = summary.topAuthor;
+              String authorSubtitle = 'No author metadata available.';
+              if (author != null) {
+                final parts = <String>[];
+                if (author.institution != null && author.institution!.isNotEmpty) {
+                  parts.add(author.institution!);
+                }
+                if (author.orcid.isNotEmpty) {
+                  parts.add('ORCID: ${author.orcid.replaceFirst("https://orcid.org/", "")}');
+                }
+                if (author.worksCount != null && author.worksCount! > 0) {
+                  parts.add('${author.worksCount} publications');
+                }
+                if (author.citedByCount != null && author.citedByCount! > 0) {
+                  parts.add('${author.citedByCount} citations');
+                }
+                if (parts.isNotEmpty) {
+                  authorSubtitle = parts.join(' • ');
+                }
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Top Contribution',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildDetailCard(
+                    icon: FontAwesomeIcons.userPen,
+                    title: author?.displayName ?? 'N/A',
+                    subtitle: authorSubtitle,
+                  ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 20),
 

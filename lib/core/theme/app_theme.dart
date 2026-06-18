@@ -34,7 +34,7 @@ class AppTheme {
           bodyMedium: TextStyle(fontSize: 14, color: textSecondary),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: darkCardBackground,
         elevation: 0,
         shape: RoundedRectangleBorder(

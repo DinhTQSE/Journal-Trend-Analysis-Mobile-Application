@@ -9,7 +9,8 @@ An academic analytics and publication trend analysis mobile application built wi
 2. [🚀 How to Get Started (Start Source)](#-how-to-get-started-start-source)
 3. [📁 Folder & Project Architecture (For Developers)](#-folder--project-architecture-for-developers)
 4. [🛠️ Extension Guide: How to Add Features](#-extension-guide-how-to-add-features)
-5. [💡 Technical Highlights & Caching](#-technical-highlights--caching)
+5. [🧩 Module Deep Dive & Business Rules](#-module-deep-dive--business-rules)
+6. [💡 Technical Highlights & Caching](#-technical-highlights--caching)
 
 ---
 
@@ -120,8 +121,40 @@ If you want to add new functions (e.g., adding user bookmarking or sorting filte
 
 ---
 
+## 🧩 Module Deep Dive & Business Rules
+
+This section details the inner workings of each key functional module and the logical business rules dictating data processing.
+
+### 1. Search & Autocomplete Module
+- **How it Works**: Captures user keyword inputs and queries the `/works` endpoint with `search=<keyword>&sort=cited_by_count:desc&per_page=50`. Quick-chips trigger predefined searches (e.g. *Cybersecurity*, *AI*).
+- **Business Rule**: The search is sorted by citation volume (`cited_by_count:desc`) to guarantee that the primary dataset represents the most influential and widely recognized works in the field.
+
+### 2. Analytical Dashboard Module
+- **How it Works**: Aggregates statistics locally from the fetched top 50 publications dataset. 
+- **Business Rules & Calculations**:
+  - **Total Works**: The total count of all existing matching papers on OpenAlex, dynamically read from the metadata counter field `meta.count` (not limited to 50).
+  - **Average Citations**: Calculated client-side by summing up `cited_by_count` across the top 50 works and dividing by 50.
+  - **Peak Publication Year**: Identifies the year with the highest publication volume by looping through the trend dataset and selecting the year containing the maximum count.
+  - **Top Journal Source**: Loops through group-by source items and displays the journal with the highest number of matching papers.
+  - **Top Contribution (Author)**: Filters out generic non-author stubs (e.g., `CERTIFICATION EXAM`, `anonymous`) from the authorship group-by list, selects the first valid profile, and makes a live call to `/authors/<id>` to display their ORCID, works count, and affiliation.
+
+### 3. Trend Analysis Carousel Module
+- **How it Works**: Uses an infinite swipable PageView controller. Queries three datasets concurrently:
+  - **Diagram 1**: `/works?search=<keyword>&group_by=publication_year`
+  - **Diagram 3**: `/works?search=<keyword>&group_by=topics.id` (returns key topics, mapped to keywords)
+  - **Diagram 7**: `/works?search=<keyword>&group_by=authorships.author.id` (returns top authors list)
+- **Business Rule**: The carousel cycles through `Diagram 1 -> Diagram 3 -> Diagram 7` infinitely. When swiping past Diagram 7, it wraps back to Diagram 1 using a modulo-3 index calculation, preventing scroll boundaries.
+
+### 4. Article Detail Module
+- **How it Works**: Displays the selected publication metadata (DOI links, publication date, journal info) and reconstructs the abstract.
+- **Business Rule (Inverted Index Reconstructor)**: OpenAlex does not return raw abstract text. Instead, it provides `abstract_inverted_index`, a map of words to their list of index positions. The app implements a reconstruction algorithm that rebuilds the paragraph by placing words at their respective indices, restoring human-readable abstracts dynamically.
+
+---
+
 ## 💡 Technical Highlights & Caching
 
 -   **Persistent Caching Layer**: The app uses `dio_cache_interceptor` with a Hive database store. Once a topic search or trend is requested, the data remains cached locally for **7 days**. Subsequent queries load instantly and function offline.
 -   **Client-Side Analytics Engine**: To avoid sending dozens of separate API calls from a mobile device (which causes lag), the repository downloads a sample of the **top 50 papers** once. It then runs high-speed Dart calculations locally to aggregate stats like *Top Journal*, *Top Author*, and *Average Citations*.
 -   **Inverted Abstract Index Resolver**: OpenAlex hides complete abstracts behind copyright-compliant `abstract_inverted_index` maps. The [abstract_parser.dart](file:///c:/Users/KHAI/Documents/semester%208/prm/lib/core/utils/abstract_parser.dart) contains an optimized string builder that reconstructs paragraph abstracts dynamically for the user detail screen.
+-   **Swipable Infinite Carousel**: The Trend Analysis screen features a custom infinite-looping `PageView` carousel (`1 -> 3 -> 7 -> 1`) displaying line charts (`fl_chart`), top keywords, and author impact charts, query-loaded concurrently via `Future.wait` in BLoC.
+-   **Polished Author Profile Metadata**: Implements a generic term validator to filter out metadata noise (e.g., `CERTIFICATION EXAM`) and queries the `/authors/<id>` endpoint live to display primary affiliation, ORCID identifier, and total publications/citations under the **Top Contribution** dashboard card.
