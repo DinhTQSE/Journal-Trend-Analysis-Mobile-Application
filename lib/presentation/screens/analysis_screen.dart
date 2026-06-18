@@ -174,7 +174,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                   if (pageIndex == 0) {
                     return _buildPublicationTrendSlide(context, state.trendData, state.keyword);
                   } else if (pageIndex == 1) {
-                    return _buildTopKeywordsSlide(context, state.topKeywords, state.keyword);
+                    return _buildTopJournalsSlide(context, state.topJournals, state.keyword);
                   } else {
                     return _buildAuthorImpactSlide(context, state.topAuthors, state.keyword);
                   }
@@ -404,10 +404,12 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
     );
   }
 
-  // --- Slide 2: Top Keywords (Horizontal Bars) ---
-  Widget _buildTopKeywordsSlide(BuildContext context, List<Map<String, dynamic>> keywordsData, String keyword) {
-    // Take top 5 keywords to avoid list cluttering
-    final topList = keywordsData.take(5).toList();
+  // --- Slide 2: Top Research Journals (Ranked Horizontal Bars) ---
+  Widget _buildTopJournalsSlide(BuildContext context, List<Map<String, dynamic>> journalsData, String keyword) {
+    final topList = journalsData.where((data) {
+      final name = data['key_display_name']?.toString().trim() ?? '';
+      return name.isNotEmpty && name.toLowerCase() != 'unknown';
+    }).take(5).toList();
     final maxCount = topList.isNotEmpty ? (topList.first['count'] as int? ?? 100).toDouble() : 100.0;
 
     return SingleChildScrollView(
@@ -415,7 +417,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDiagramHeader(title: 'Top Keywords', topic: keyword),
+          _buildDiagramHeader(title: 'Top Research Journals', topic: keyword),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
@@ -423,10 +425,12 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
               color: AppTheme.darkCardBackground.withOpacity(0.4),
             ),
             child: topList.isEmpty
-                ? const Center(child: Text('No keywords available', style: TextStyle(color: AppTheme.textSecondary)))
+                ? const Center(child: Text('No journal data available', style: TextStyle(color: AppTheme.textSecondary)))
                 : Column(
-                    children: topList.map((data) {
-                      final name = data['key_display_name']?.toString() ?? 'Unknown';
+                    children: topList.asMap().entries.map((entry) {
+                      final rank = entry.key + 1;
+                      final data = entry.value;
+                      final name = data['key_display_name']?.toString().trim() ?? '';
                       final count = data['count'] as int? ?? 0;
                       final ratio = maxCount > 0 ? count / maxCount : 0.0;
 
@@ -438,6 +442,25 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primaryNeon.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: AppTheme.primaryNeon.withOpacity(0.35)),
+                                  ),
+                                  child: Text(
+                                    '$rank',
+                                    style: const TextStyle(
+                                      color: AppTheme.primaryNeon,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
                                     name,
@@ -467,7 +490,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: FractionallySizedBox(
-                                  widthFactor: ratio.clamp(0.05, 1.0),
+                                  widthFactor: ratio.clamp(0.05, 1.0).toDouble(),
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
