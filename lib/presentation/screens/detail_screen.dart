@@ -159,7 +159,11 @@ class DetailScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     author.displayName,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: AppTheme.textPrimary,
+                                    ),
                                   ),
                                   if (author.orcid.isNotEmpty)
                                     Text(
@@ -214,14 +218,6 @@ class DetailScreen extends StatelessWidget {
                       onPressed: () => _launchDoi(publication.doiUrl),
                       icon: const FaIcon(FontAwesomeIcons.arrowUpRightFromSquare, size: 14),
                       label: const Text('Open Publisher Portal (DOI)'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryNeon,
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
                     ),
                   ),
                 ),

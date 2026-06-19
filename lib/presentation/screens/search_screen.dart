@@ -72,7 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'Journal Trend Analyzer',
+                    'Scientia Analytics',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,
@@ -82,7 +82,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Explore insights from OpenAlex database',
+                'Comprehensive bibliometric analysis platform',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 20),
@@ -204,10 +204,6 @@ class _SearchScreenState extends State<SearchScreen> {
                               onPressed: () => _triggerSearch(_searchController.text),
                               icon: const Icon(Icons.refresh_rounded),
                               label: const Text('Retry'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.primaryNeon,
-                                foregroundColor: Colors.black,
-                              ),
                             ),
                           ],
                         ),
@@ -364,7 +360,7 @@ class _SearchScreenState extends State<SearchScreen> {
           return Container(
             height: 140,
             decoration: BoxDecoration(
-              color: Colors.black,
+              color: AppTheme.darkCardBackground,
               borderRadius: BorderRadius.circular(16),
             ),
           );

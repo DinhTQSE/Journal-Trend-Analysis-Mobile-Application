@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Vibrant, futuristic dark mode palette
-  static const Color darkBackground = Color(0xFF0F172A); // Slate 900
-  static const Color darkCardBackground = Color(0xFF1E293B); // Slate 800
-  static const Color primaryNeon = Color(0xFF06B6D4); // Cyan 500
-  static const Color secondaryNeon = Color(0xFF8B5CF6); // Violet 500
-  static const Color accentRose = Color(0xFFF43F5E); // Rose 500
-  static const Color textPrimary = Color(0xFFF8FAFC); // Slate 50
-  static const Color textSecondary = Color(0xFF94A3B8); // Slate 400
-  static const Color borderNeon = Color(0xFF334155); // Slate 700
+  // Vibrant, clean light mode palette matching the Scientia Analytics theme
+  static const Color darkBackground = Color(0xFFF8FAFC); // Slate 50
+  static const Color darkCardBackground = Color(0xFFFFFFFF); // Pure White
+  static const Color primaryNeon = Color(0xFFEA580C); // Vibrant Orange (Orange 600)
+  static const Color secondaryNeon = Color(0xFF475569); // Slate 600
+  static const Color accentRose = Color(0xFFEF4444); // Red 500
+  static const Color textPrimary = Color(0xFF0F172A); // Slate 900
+  static const Color textSecondary = Color(0xFF64748B); // Slate 500
+  static const Color borderNeon = Color(0xFFE2E8F0); // Slate 200
 
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       scaffoldBackgroundColor: darkBackground,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: const ColorScheme.light(
         primary: primaryNeon,
         secondary: secondaryNeon,
         surface: darkCardBackground,
         error: accentRose,
-        onPrimary: Colors.black,
+        onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: textPrimary,
       ),
@@ -72,22 +72,37 @@ class AppTheme {
           borderSide: const BorderSide(color: primaryNeon, width: 1.5),
         ),
       ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryNeon,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+      ),
     );
   }
 
-  // Helper for glassmorphic visual effect container
+  // Helper for glassmorphic/flat container
   static BoxDecoration glassBox({
     Color? color,
     BorderRadius? borderRadius,
     Border? border,
   }) {
     return BoxDecoration(
-      color: color ?? darkCardBackground.withValues(alpha: 0.8),
+      color: color ?? darkCardBackground,
       borderRadius: borderRadius ?? BorderRadius.circular(16),
-      border: border ?? Border.all(color: borderNeon.withValues(alpha: 0.5)),
+      border: border ?? Border.all(color: borderNeon),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.25),
+          color: Colors.black.withValues(alpha: 0.06),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),
