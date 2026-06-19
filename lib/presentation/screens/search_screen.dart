@@ -220,13 +220,23 @@ class _SearchScreenState extends State<SearchScreen> {
                         );
                       }
 
-                      return ListView.separated(
-                        itemCount: state.publications.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final pub = state.publications[index];
-                          return _buildPublicationCard(pub);
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          _triggerSearch(_searchController.text);
+                          // Delay slightly to let the refresh indicator spin gracefully
+                          await Future.delayed(const Duration(milliseconds: 800));
                         },
+                        color: AppTheme.primaryNeon,
+                        backgroundColor: AppTheme.darkCardBackground,
+                        child: ListView.separated(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: state.publications.length,
+                          separatorBuilder: (context, index) => const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final pub = state.publications[index];
+                            return _buildPublicationCard(pub, index);
+                          },
+                        ),
                       );
                     }
 
@@ -241,9 +251,25 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildPublicationCard(Publication pub) {
-    return Card(
-      child: InkWell(
+  Widget _buildPublicationCard(Publication pub, int index) {
+    // Thêm hiệu ứng trượt và mờ dần (Staggered Animation) cho từng thẻ
+    final int delayMs = (index * 80).clamp(0, 500).toInt();
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 400 + delayMs),
+      curve: Curves.easeOutQuart,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 40 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: Card(
+        child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
           context.push('/detail', extra: pub);
@@ -254,14 +280,20 @@ class _SearchScreenState extends State<SearchScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Title
-              Text(
-                pub.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
+              Hero(
+                tag: 'title-${pub.id}',
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Text(
+                    pub.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -346,6 +378,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 
