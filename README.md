@@ -42,7 +42,7 @@ Follow these simple steps to set up and run the source base on your machine.
 ### Setup Steps
 1.  **Open the project** in your IDE of choice.
 2.  **Configure Polite Pool (Optional but highly recommended)**:
-    Open [lib/core/constants/api_constants.dart](file:///c:/Users/KHAI/Documents/semester%208/prm/lib/core/constants/api_constants.dart) and replace `your_email@domain.com` with your real email. This places your app requests in the fast-track pool of the OpenAlex server, speeding up load times significantly.
+    Open [lib/core/constants/api_constants.dart](file:///d:/PRM_CP2/Journal-Trend-Analysis-Mobile-Application/lib/core/constants/api_constants.dart) and replace the contact email with your real email. This places your app requests in the fast-track pool of the OpenAlex server, speeding up load times significantly.
 3.  **Fetch Dependencies**:
     Open your terminal in the root directory and run:
     ```bash
@@ -111,12 +111,12 @@ If you want to add new functions (e.g., adding user bookmarking or sorting filte
 
 ### Step 3: Configure BLoC State Management
 1.  Add Events and States in `lib/presentation/bloc/`.
-2.  Register the new Bloc in [lib/injection_container.dart](file:///c:/Users/KHAI/Documents/semester%208/prm/lib/injection_container.dart).
+2.  Register the new Bloc in [lib/injection_container.dart](file:///d:/PRM_CP2/Journal-Trend-Analysis-Mobile-Application/lib/injection_container.dart).
 3.  Provide the Bloc globally in `lib/main.dart` if accessed across multiple screens.
 
 ### Step 4: Draw the UI Component
 1.  Create the screen layout in `lib/presentation/screens/`.
-2.  Route the screen in [lib/core/navigation/router.dart](file:///c:/Users/KHAI/Documents/semester%208/prm/lib/core/navigation/router.dart).
+2.  Route the screen in [lib/core/navigation/router.dart](file:///d:/PRM_CP2/Journal-Trend-Analysis-Mobile-Application/lib/core/navigation/router.dart).
 3.  Dispatch events to trigger UI state updates.
 
 ---
@@ -155,6 +155,41 @@ This section details the inner workings of each key functional module and the lo
 
 -   **Persistent Caching Layer**: The app uses `dio_cache_interceptor` with a Hive database store. Once a topic search or trend is requested, the data remains cached locally for **7 days**. Subsequent queries load instantly and function offline.
 -   **Client-Side Analytics Engine**: To avoid sending dozens of separate API calls from a mobile device (which causes lag), the repository downloads a sample of the **top 50 papers** once. It then runs high-speed Dart calculations locally to aggregate stats like *Top Journal*, *Top Author*, and *Average Citations*.
--   **Inverted Abstract Index Resolver**: OpenAlex hides complete abstracts behind copyright-compliant `abstract_inverted_index` maps. The [abstract_parser.dart](file:///c:/Users/KHAI/Documents/semester%208/prm/lib/core/utils/abstract_parser.dart) contains an optimized string builder that reconstructs paragraph abstracts dynamically for the user detail screen.
+-   **Inverted Abstract Index Resolver**: OpenAlex hides complete abstracts behind copyright-compliant `abstract_inverted_index` maps. The [abstract_parser.dart](file:///d:/PRM_CP2/Journal-Trend-Analysis-Mobile-Application/lib/core/utils/abstract_parser.dart) contains an optimized string builder that reconstructs paragraph abstracts dynamically for the user detail screen.
 -   **Swipable Infinite Carousel**: The Trend Analysis screen features a custom infinite-looping `PageView` carousel (`1 -> 3 -> 7 -> 1`) displaying line charts (`fl_chart`), top keywords, and author impact charts, query-loaded concurrently via `Future.wait` in BLoC.
 -   **Polished Author Profile Metadata**: Implements a generic term validator to filter out metadata noise (e.g., `CERTIFICATION EXAM`) and queries the `/authors/<id>` endpoint live to display primary affiliation, ORCID identifier, and total publications/citations under the **Top Contribution** dashboard card.
+
+---
+
+## 🛠️ Troubleshooting & Build Guide (Windows/Android)
+
+If you run into compilation or runtime issues while running or building the APK, follow these guidelines:
+
+### 1. "this and base files have different roots" (Kotlin Build Error)
+*   **Cause**: Triggered on Windows when the project is on one drive (e.g. `D:`) and the Pub/Gradle cache is on the system drive (e.g. `C:`).
+*   **Fix**: Already configured in [gradle.properties](file:///d:/PRM_CP2/Journal-Trend-Analysis-Mobile-Application/android/gradle.properties) by adding:
+    ```properties
+    kotlin.incremental=false
+    ksp.incremental=false
+    ```
+*   **Process**: Clear the old corrupt caches and rebuild:
+    ```bash
+    flutter clean
+    flutter pub get
+    flutter build apk --release
+    ```
+
+### 2. "Failed host lookup: 'api.openalex.org'" (Offline/Network Error in Release APK)
+*   **Cause**: Missing Internet permission in the production manifest.
+*   **Fix**: Already configured in [AndroidManifest.xml](file:///d:/PRM_CP2/Journal-Trend-Analysis-Mobile-Application/android/app/src/main/AndroidManifest.xml) by adding the following tag right under the root `<manifest>` element:
+    ```xml
+    <uses-permission android:name="android.permission.INTERNET"/>
+    ```
+
+### 3. "The class 'IconData' can't be extended" (Compile Error with Flutter 3.44+)
+*   **Cause**: In recent Flutter versions, the core `IconData` class was made `final`. Older versions of `font_awesome_flutter` that try to subclass it will fail to compile.
+*   **Fix**: Updated `pubspec.yaml` to `font_awesome_flutter: ^11.0.0` which replaces subclasses with `FaIconData` and uses the `FaIcon` widget.
+
+### 4. White Screen / Crash on Flutter Web (Chrome)
+*   **Cause**: `path_provider` fails to execute on browser platforms (since it doesn't support directory systems), causing initialization to crash before `runApp` starts.
+*   **Fix**: Configured a `kIsWeb` check in [api_client.dart](file:///d:/PRM_CP2/Journal-Trend-Analysis-Mobile-Application/lib/core/network/api_client.dart) to bypass `path_provider` and `HiveCacheStore` on Web, falling back to `MemCacheStore`.

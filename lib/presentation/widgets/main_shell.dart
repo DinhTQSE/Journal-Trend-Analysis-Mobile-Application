@@ -40,13 +40,13 @@ class MainShell extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: AppTheme.borderNeon.withOpacity(0.4),
+              color: AppTheme.borderNeon.withValues(alpha: 0.4),
               width: 1.0,
             ),
           ),
         ),
         child: BottomNavigationBar(
-          backgroundColor: AppTheme.darkCardBackground.withOpacity(0.95),
+          backgroundColor: AppTheme.darkCardBackground.withValues(alpha: 0.95),
           selectedItemColor: AppTheme.primaryNeon,
           unselectedItemColor: AppTheme.textSecondary,
           currentIndex: selectedIndex,
@@ -56,15 +56,15 @@ class MainShell extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.magnifyingGlass, size: 18),
+              icon: FaIcon(FontAwesomeIcons.magnifyingGlass, size: 18),
               label: 'Search',
             ),
             BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.chartLine, size: 18),
+              icon: FaIcon(FontAwesomeIcons.chartLine, size: 18),
               label: 'Trends',
             ),
             BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.circleInfo, size: 18),
+              icon: FaIcon(FontAwesomeIcons.circleInfo, size: 18),
               label: 'Dashboard',
             ),
           ],

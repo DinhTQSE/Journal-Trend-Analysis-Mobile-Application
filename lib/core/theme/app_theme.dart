@@ -82,12 +82,12 @@ class AppTheme {
     Border? border,
   }) {
     return BoxDecoration(
-      color: color ?? darkCardBackground.withOpacity(0.8),
+      color: color ?? darkCardBackground.withValues(alpha: 0.8),
       borderRadius: borderRadius ?? BorderRadius.circular(16),
-      border: border ?? Border.all(color: borderNeon.withOpacity(0.5)),
+      border: border ?? Border.all(color: borderNeon.withValues(alpha: 0.5)),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.25),
+          color: Colors.black.withValues(alpha: 0.25),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),
