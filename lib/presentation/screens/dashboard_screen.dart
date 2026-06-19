@@ -408,9 +408,9 @@ class DashboardScreen extends StatelessWidget {
           height: 26,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppTheme.primaryNeon.withOpacity(0.12),
+            color: AppTheme.primaryNeon.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: AppTheme.primaryNeon.withOpacity(0.35)),
+            border: Border.all(color: AppTheme.primaryNeon.withValues(alpha: 0.35)),
           ),
           child: Text(
             '$rank',
