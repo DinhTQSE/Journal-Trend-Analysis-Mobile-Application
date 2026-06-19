@@ -42,7 +42,7 @@ class DetailScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: AppTheme.glassBox(
-                  color: AppTheme.darkCardBackground.withOpacity(0.6),
+                  color: AppTheme.darkCardBackground.withValues(alpha: 0.6),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,9 +54,9 @@ class DetailScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryNeon.withOpacity(0.15),
+                            color: AppTheme.primaryNeon.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.primaryNeon.withOpacity(0.4)),
+                            border: Border.all(color: AppTheme.primaryNeon.withValues(alpha: 0.4)),
                           ),
                           child: Text(
                             publication.publicationYear.toString(),
@@ -69,7 +69,7 @@ class DetailScreen extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            const Icon(FontAwesomeIcons.quoteLeft, size: 10, color: AppTheme.secondaryNeon),
+                            const FaIcon(FontAwesomeIcons.quoteLeft, size: 10, color: AppTheme.secondaryNeon),
                             const SizedBox(width: 6),
                             Text(
                               '${publication.citedByCount} Citations',
@@ -107,17 +107,17 @@ class DetailScreen extends StatelessWidget {
               const SizedBox(height: 8),
               if (publication.journal != null) ...[
                 _buildMetaInfoRow(
-                  icon: FontAwesomeIcons.bookOpen,
+                  icon: const FaIcon(FontAwesomeIcons.bookOpen, size: 14, color: AppTheme.textSecondary),
                   label: 'Journal',
                   value: publication.journal!.displayName,
                 ),
                 _buildMetaInfoRow(
-                  icon: FontAwesomeIcons.building,
+                  icon: const FaIcon(FontAwesomeIcons.building, size: 14, color: AppTheme.textSecondary),
                   label: 'Publisher',
                   value: publication.journal!.publisher,
                 ),
                 _buildMetaInfoRow(
-                  icon: FontAwesomeIcons.tag,
+                  icon: const FaIcon(FontAwesomeIcons.tag, size: 14, color: AppTheme.textSecondary),
                   label: 'Source Type',
                   value: publication.journal!.type.toUpperCase(),
                 ),
@@ -151,7 +151,7 @@ class DetailScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 6.0),
                         child: Row(
                           children: [
-                            const Icon(FontAwesomeIcons.userPen, size: 12, color: AppTheme.secondaryNeon),
+                            const FaIcon(FontAwesomeIcons.userPen, size: 12, color: AppTheme.secondaryNeon),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
@@ -192,7 +192,7 @@ class DetailScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: AppTheme.glassBox(
-                  color: AppTheme.darkCardBackground.withOpacity(0.4),
+                  color: AppTheme.darkCardBackground.withValues(alpha: 0.4),
                 ),
                 child: Text(
                   publication.abstractText,
@@ -212,7 +212,7 @@ class DetailScreen extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () => _launchDoi(publication.doiUrl),
-                      icon: const Icon(FontAwesomeIcons.arrowUpRightFromSquare, size: 14),
+                      icon: const FaIcon(FontAwesomeIcons.arrowUpRightFromSquare, size: 14),
                       label: const Text('Open Publisher Portal (DOI)'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryNeon,
@@ -234,7 +234,7 @@ class DetailScreen extends StatelessWidget {
   }
 
   Widget _buildMetaInfoRow({
-    required IconData icon,
+    required Widget icon,
     required String label,
     required String value,
   }) {
@@ -243,7 +243,7 @@ class DetailScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 14, color: AppTheme.textSecondary),
+          icon,
           const SizedBox(width: 12),
           SizedBox(
             width: 90,

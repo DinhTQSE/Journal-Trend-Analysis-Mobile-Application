@@ -24,7 +24,7 @@ class DashboardScreen extends StatelessWidget {
               // Header title
               Row(
                 children: [
-                  const Icon(FontAwesomeIcons.gaugeHigh, color: AppTheme.primaryNeon, size: 24),
+                  const FaIcon(FontAwesomeIcons.gaugeHigh, color: AppTheme.primaryNeon, size: 24),
                   const SizedBox(width: 12),
                   Text(
                     'Research Dashboard',
@@ -49,7 +49,7 @@ class DashboardScreen extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.chartSimple,
                               size: 64,
                               color: AppTheme.borderNeon,
@@ -106,9 +106,9 @@ class DashboardScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primaryNeon.withOpacity(0.1),
+              color: AppTheme.primaryNeon.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppTheme.primaryNeon.withOpacity(0.3)),
+              border: Border.all(color: AppTheme.primaryNeon.withValues(alpha: 0.3)),
             ),
             child: Text(
               'Topic Analysis: $keyword',
@@ -236,10 +236,10 @@ class DashboardScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(FontAwesomeIcons.crown, color: Colors.amber, size: 16),
+                          const FaIcon(FontAwesomeIcons.crown, color: Colors.amber, size: 16),
                           Row(
                             children: [
-                              const Icon(FontAwesomeIcons.quoteLeft, size: 10, color: AppTheme.secondaryNeon),
+                              const FaIcon(FontAwesomeIcons.quoteLeft, size: 10, color: AppTheme.secondaryNeon),
                               const SizedBox(width: 4),
                               Text(
                                 '${summary.topPaper!.citedByCount} Citations',
@@ -283,7 +283,7 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildStatCard({
-    required IconData icon,
+    required FaIconData icon,
     required String title,
     required String value,
     required Color color,
@@ -302,7 +302,7 @@ class DashboardScreen extends StatelessWidget {
                 title,
                 style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold),
               ),
-              Icon(icon, size: 14, color: color),
+              FaIcon(icon, size: 14, color: color),
             ],
           ),
           const SizedBox(height: 10),
@@ -323,7 +323,7 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildDetailCard({
-    required IconData icon,
+    required FaIconData icon,
     required String title,
     required String subtitle,
   }) {
@@ -336,10 +336,10 @@ class DashboardScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppTheme.borderNeon.withOpacity(0.2),
+              color: AppTheme.borderNeon.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: AppTheme.primaryNeon, size: 16),
+            child: FaIcon(icon, color: AppTheme.primaryNeon, size: 16),
           ),
           const SizedBox(width: 16),
           Expanded(

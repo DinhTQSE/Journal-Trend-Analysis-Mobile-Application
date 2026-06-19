@@ -52,7 +52,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
               // Title Header
               Row(
                 children: [
-                  const Icon(FontAwesomeIcons.chartLine, color: AppTheme.primaryNeon, size: 24),
+                  const FaIcon(FontAwesomeIcons.chartLine, color: AppTheme.primaryNeon, size: 24),
                   const SizedBox(width: 12),
                   Text(
                     'Publication Trends',
@@ -78,7 +78,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.chartArea,
                               size: 64,
                               color: AppTheme.borderNeon,
@@ -144,9 +144,9 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primaryNeon.withOpacity(0.1),
+              color: AppTheme.primaryNeon.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppTheme.primaryNeon.withOpacity(0.3)),
+              border: Border.all(color: AppTheme.primaryNeon.withValues(alpha: 0.3)),
             ),
             child: Text(
               'Keyword: ${state.keyword}',
@@ -186,7 +186,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                 left: 0,
                 child: CircleAvatar(
                   radius: 18,
-                  backgroundColor: AppTheme.darkCardBackground.withOpacity(0.8),
+                  backgroundColor: AppTheme.darkCardBackground.withValues(alpha: 0.8),
                   child: IconButton(
                     padding: EdgeInsets.zero,
                     icon: const Icon(Icons.chevron_left_rounded, color: AppTheme.primaryNeon, size: 24),
@@ -205,7 +205,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                 right: 0,
                 child: CircleAvatar(
                   radius: 18,
-                  backgroundColor: AppTheme.darkCardBackground.withOpacity(0.8),
+                  backgroundColor: AppTheme.darkCardBackground.withValues(alpha: 0.8),
                   child: IconButton(
                     padding: EdgeInsets.zero,
                     icon: const Icon(Icons.chevron_right_rounded, color: AppTheme.primaryNeon, size: 24),
@@ -293,10 +293,10 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppTheme.secondaryNeon.withOpacity(0.15),
+                    color: AppTheme.secondaryNeon.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(FontAwesomeIcons.fire, color: AppTheme.secondaryNeon, size: 16),
+                  child: const FaIcon(FontAwesomeIcons.fire, color: AppTheme.secondaryNeon, size: 16),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -329,7 +329,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
             height: 230,
             padding: const EdgeInsets.fromLTRB(5, 20, 15, 5),
             decoration: AppTheme.glassBox(
-              color: AppTheme.darkCardBackground.withOpacity(0.3),
+              color: AppTheme.darkCardBackground.withValues(alpha: 0.3),
             ),
             child: LineChart(
               LineChartData(
@@ -387,8 +387,8 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          AppTheme.primaryNeon.withOpacity(0.15),
-                          AppTheme.secondaryNeon.withOpacity(0.01),
+                          AppTheme.primaryNeon.withValues(alpha: 0.15),
+                          AppTheme.secondaryNeon.withValues(alpha: 0.01),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -420,7 +420,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: AppTheme.glassBox(
-              color: AppTheme.darkCardBackground.withOpacity(0.4),
+              color: AppTheme.darkCardBackground.withValues(alpha: 0.4),
             ),
             child: topList.isEmpty
                 ? const Center(child: Text('No keywords available', style: TextStyle(color: AppTheme.textSecondary)))
@@ -461,7 +461,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                               height: 10,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: AppTheme.borderNeon.withOpacity(0.2),
+                                color: AppTheme.borderNeon.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Align(
@@ -506,7 +506,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: AppTheme.glassBox(
-              color: AppTheme.darkCardBackground.withOpacity(0.4),
+              color: AppTheme.darkCardBackground.withValues(alpha: 0.4),
             ),
             child: topList.isEmpty
                 ? const Center(child: Text('No authors available', style: TextStyle(color: AppTheme.textSecondary)))
@@ -547,7 +547,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                               height: 10,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: AppTheme.borderNeon.withOpacity(0.2),
+                                color: AppTheme.borderNeon.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Align(

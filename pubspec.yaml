@@ -13,7 +13,7 @@ dependencies:
 
   # UI & Styling
   google_fonts: ^6.1.0
-  font_awesome_flutter: ^10.7.0
+  font_awesome_flutter: ^11.0.0
   shimmer: ^3.0.0
   url_launcher: ^6.2.5
 

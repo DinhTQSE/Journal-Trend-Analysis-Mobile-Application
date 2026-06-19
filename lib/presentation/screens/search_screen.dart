@@ -64,7 +64,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     shaderCallback: (bounds) => const LinearGradient(
                       colors: [AppTheme.primaryNeon, AppTheme.secondaryNeon],
                     ).createShader(bounds),
-                    child: const Icon(
+                    child: const FaIcon(
                       FontAwesomeIcons.graduationCap,
                       size: 28,
                       color: Colors.white,
@@ -93,7 +93,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 onSubmitted: _triggerSearch,
                 decoration: InputDecoration(
                   hintText: 'Search topic (e.g. Machine Learning)...',
-                  prefixIcon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),
+                  prefixIcon: const FaIcon(FontAwesomeIcons.magnifyingGlass, size: 16),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.arrow_forward_rounded, color: AppTheme.primaryNeon),
                     onPressed: () => _triggerSearch(_searchController.text),
@@ -116,7 +116,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: AppTheme.glassBox(
-                          color: AppTheme.darkCardBackground.withOpacity(0.4),
+                          color: AppTheme.darkCardBackground.withValues(alpha: 0.4),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -163,7 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.magnifyingGlassChart,
                               size: 64,
                               color: AppTheme.borderNeon,
@@ -274,7 +274,7 @@ class _SearchScreenState extends State<SearchScreen> {
               if (pub.journal != null)
                 Row(
                   children: [
-                    const Icon(FontAwesomeIcons.bookOpen, size: 12, color: AppTheme.primaryNeon),
+                    const FaIcon(FontAwesomeIcons.bookOpen, size: 12, color: AppTheme.primaryNeon),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
@@ -313,7 +313,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.borderNeon.withOpacity(0.3),
+                      color: AppTheme.borderNeon.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -328,7 +328,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   // Citations count
                   Row(
                     children: [
-                      const Icon(
+                      const FaIcon(
                         FontAwesomeIcons.quoteLeft,
                         size: 12,
                         color: AppTheme.secondaryNeon,

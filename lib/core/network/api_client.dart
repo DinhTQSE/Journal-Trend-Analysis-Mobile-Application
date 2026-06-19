@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
@@ -19,29 +20,38 @@ class ApiClient {
       ),
     );
 
-    try {
-      final cacheDir = await getApplicationDocumentsDirectory();
-      final cacheStore = HiveCacheStore('${cacheDir.path}/openalex_cache');
-      
-      final cacheOptions = CacheOptions(
-        store: cacheStore,
-        policy: CachePolicy.request,
-        hitCacheOnErrorExcept: [401, 403, 404],
-        maxStale: const Duration(days: 7),
-        priority: CachePriority.normal,
-        keyBuilder: CacheOptions.defaultCacheKeyBuilder,
-        allowPostMethod: false,
-      );
-
-      dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
-    } catch (e) {
-      // Fallback to memory cache store if path_provider or hive fails (e.g. in test environment)
+    if (kIsWeb) {
       final cacheOptions = CacheOptions(
         store: MemCacheStore(),
         policy: CachePolicy.request,
         maxStale: const Duration(days: 7),
       );
       dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
+    } else {
+      try {
+        final cacheDir = await getApplicationDocumentsDirectory();
+        final cacheStore = HiveCacheStore('${cacheDir.path}/openalex_cache');
+        
+        final cacheOptions = CacheOptions(
+          store: cacheStore,
+          policy: CachePolicy.request,
+          hitCacheOnErrorExcept: [401, 403, 404],
+          maxStale: const Duration(days: 7),
+          priority: CachePriority.normal,
+          keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+          allowPostMethod: false,
+        );
+
+        dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
+      } catch (e) {
+        // Fallback to memory cache store if path_provider or hive fails (e.g. in test environment)
+        final cacheOptions = CacheOptions(
+          store: MemCacheStore(),
+          policy: CachePolicy.request,
+          maxStale: const Duration(days: 7),
+        );
+        dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
+      }
     }
 
     // Add logger interceptor for debugging in development
