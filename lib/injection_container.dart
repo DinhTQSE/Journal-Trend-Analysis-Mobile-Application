@@ -8,6 +8,7 @@ import 'domain/usecases/get_publications_trend.dart';
 import 'domain/usecases/get_publication_by_id.dart';
 import 'domain/usecases/get_top_keywords.dart';
 import 'domain/usecases/get_top_authors.dart';
+import 'domain/usecases/get_top_journals.dart';
 import 'domain/usecases/search_publications.dart';
 import 'presentation/bloc/analysis/analysis_bloc.dart';
 import 'presentation/bloc/dashboard/dashboard_bloc.dart';
@@ -25,6 +26,7 @@ Future<void> init() async {
       getPublicationsTrend: sl(),
       getTopKeywords: sl(),
       getTopAuthors: sl(),
+      getTopJournals: sl(),
     ),
   );
   sl.registerFactory(() => DashboardBloc(getAnalyticsSummary: sl()));
@@ -36,6 +38,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetPublicationById(sl()));
   sl.registerLazySingleton(() => GetTopKeywords(sl()));
   sl.registerLazySingleton(() => GetTopAuthors(sl()));
+  sl.registerLazySingleton(() => GetTopJournals(sl()));
 
   // --- Repositories ---
   sl.registerLazySingleton<PublicationRepository>(
