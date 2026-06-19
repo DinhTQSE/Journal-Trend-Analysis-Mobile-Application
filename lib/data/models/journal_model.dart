@@ -6,6 +6,7 @@ class JournalModel extends Journal {
     required super.displayName,
     required super.publisher,
     required super.type,
+    super.publicationCount,
   });
 
   factory JournalModel.fromJson(Map<String, dynamic> json) {
@@ -16,6 +17,7 @@ class JournalModel extends Journal {
       displayName: sourceMap['display_name']?.toString() ?? 'Unknown Source',
       publisher: sourceMap['publisher']?.toString() ?? 'Unknown Publisher',
       type: sourceMap['type']?.toString() ?? 'unknown',
+      publicationCount: sourceMap['works_count'] as int? ?? 0,
     );
   }
 
@@ -25,6 +27,7 @@ class JournalModel extends Journal {
       'display_name': displayName,
       'publisher': publisher,
       'type': type,
+      'works_count': publicationCount,
     };
   }
 }

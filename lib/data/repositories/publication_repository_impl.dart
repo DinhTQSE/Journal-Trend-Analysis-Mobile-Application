@@ -98,19 +98,26 @@ class PublicationRepositoryImpl implements PublicationRepository {
       // Top Paper is the most cited one (first in the desc-sorted list)
       final topPaper = publications.first;
 
-      // Extract Top Journal from the API group_by results
-      Journal? topJournal;
-      if (topJournalsData.isNotEmpty) {
-        final firstJournal = topJournalsData.first;
-        final keyId = firstJournal['key']?.toString() ?? '';
-        final displayName = firstJournal['key_display_name']?.toString() ?? 'Unknown Source';
-        topJournal = Journal(
-          id: keyId,
-          displayName: displayName,
-          publisher: 'Various Publishers',
-          type: 'journal',
-        );
-      }
+      // Extract ranked top journal sources from the API group_by results.
+      final topJournals = topJournalsData
+          .where((journalMap) {
+            final displayName = journalMap['key_display_name']?.toString().trim() ?? '';
+            return displayName.isNotEmpty && displayName.toLowerCase() != 'unknown';
+          })
+          .take(5)
+          .map((journalMap) {
+            final keyId = journalMap['key']?.toString() ?? '';
+            final displayName = journalMap['key_display_name']?.toString() ?? 'Unknown Source';
+            return Journal(
+              id: keyId,
+              displayName: displayName,
+              publisher: 'Various Publishers',
+              type: 'journal',
+              publicationCount: journalMap['count'] as int? ?? 0,
+            );
+          })
+          .toList();
+      final topJournal = topJournals.isNotEmpty ? topJournals.first : null;
 
       // Extract Top Author from the API group_by results
       Author? topAuthor;
@@ -166,6 +173,7 @@ class PublicationRepositoryImpl implements PublicationRepository {
         topPaper: topPaper,
         topAuthor: topAuthor,
         topJournal: topJournal,
+        topJournals: topJournals,
       );
     } catch (e) {
       throw Exception('Get analytics summary failed: $e');
