@@ -8,6 +8,7 @@ class AnalyticsSummary extends Equatable {
   final double averageCitations;
   final int peakYear;
   final Journal? topJournal;
+  final List<Journal> topJournals;
   final Author? topAuthor;
   final Publication? topPaper;
 
@@ -16,6 +17,7 @@ class AnalyticsSummary extends Equatable {
     required this.averageCitations,
     required this.peakYear,
     this.topJournal,
+    this.topJournals = const [],
     this.topAuthor,
     this.topPaper,
   });
@@ -26,6 +28,7 @@ class AnalyticsSummary extends Equatable {
         averageCitations,
         peakYear,
         topJournal,
+        topJournals,
         topAuthor,
         topPaper,
       ];

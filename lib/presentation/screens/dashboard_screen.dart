@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/analytics_summary.dart';
+import '../../domain/entities/journal.dart';
 import '../bloc/dashboard/dashboard_bloc.dart';
 import '../bloc/dashboard/dashboard_state.dart';
 
@@ -158,19 +159,13 @@ class DashboardScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // Top Contributing Journal
+          // Top Contributing Journals
           const Text(
-            'Top Journal Source',
+            'Top Journal Sources',
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
           ),
           const SizedBox(height: 8),
-          _buildDetailCard(
-            icon: FontAwesomeIcons.bookOpen,
-            title: summary.topJournal?.displayName ?? 'N/A',
-            subtitle: summary.topJournal != null
-                ? 'Publisher: ${summary.topJournal!.publisher} (${summary.topJournal!.type})'
-                : 'No source publication data recorded.',
-          ),
+          _buildJournalSources(summary),
           const SizedBox(height: 20),
 
           // Top Contributing Author
@@ -364,6 +359,79 @@ class DashboardScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildJournalSources(AnalyticsSummary summary) {
+    final journals = summary.topJournals.isNotEmpty
+        ? summary.topJournals
+        : [
+            if (summary.topJournal != null) summary.topJournal!,
+          ];
+
+    if (journals.isEmpty) {
+      return _buildDetailCard(
+        icon: FontAwesomeIcons.bookOpen,
+        title: 'N/A',
+        subtitle: 'No source publication data recorded.',
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: AppTheme.glassBox(),
+      child: Column(
+        children: journals.asMap().entries.map((entry) {
+          final index = entry.key;
+          final journal = entry.value;
+          return Padding(
+            padding: EdgeInsets.only(bottom: index == journals.length - 1 ? 0 : 12),
+            child: _buildJournalRow(index + 1, journal),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildJournalRow(int rank, Journal journal) {
+    final countText = journal.publicationCount > 0 ? '${journal.publicationCount} papers' : journal.type;
+
+    return Row(
+      children: [
+        Container(
+          width: 26,
+          height: 26,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: AppTheme.primaryNeon.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: AppTheme.primaryNeon.withOpacity(0.35)),
+          ),
+          child: Text(
+            '$rank',
+            style: const TextStyle(
+              color: AppTheme.primaryNeon,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            journal.displayName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.textPrimary),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          countText,
+          style: const TextStyle(color: AppTheme.secondaryNeon, fontWeight: FontWeight.bold, fontSize: 12),
+        ),
+      ],
     );
   }
 }

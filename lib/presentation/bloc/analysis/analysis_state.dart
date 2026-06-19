@@ -15,17 +15,25 @@ class AnalysisSuccess extends AnalysisState {
   final Map<int, int> trendData;
   final List<Map<String, dynamic>> topKeywords;
   final List<Map<String, dynamic>> topAuthors;
+  final List<Map<String, dynamic>> topJournals;
   final String keyword;
 
   const AnalysisSuccess({
     required this.trendData,
     required this.topKeywords,
     required this.topAuthors,
+    required this.topJournals,
     required this.keyword,
   });
 
   @override
-  List<Object?> get props => [trendData, topKeywords, topAuthors, keyword];
+  List<Object?> get props => [
+        trendData,
+        topKeywords,
+        topAuthors,
+        topJournals,
+        keyword,
+      ];
 }
 
 class AnalysisFailure extends AnalysisState {
