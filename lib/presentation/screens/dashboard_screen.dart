@@ -28,7 +28,7 @@ class DashboardScreen extends StatelessWidget {
                   const FaIcon(FontAwesomeIcons.gaugeHigh, color: AppTheme.primaryNeon, size: 24),
                   const SizedBox(width: 12),
                   Text(
-                    'Research Dashboard',
+                    'Research Ecosystem Overview',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -37,7 +37,7 @@ class DashboardScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Key analytics & aggregated insights',
+                'Aggregated publication analytics & insights',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 24),
@@ -253,7 +253,11 @@ class DashboardScreen extends StatelessWidget {
                         summary.topPaper!.title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: AppTheme.textPrimary,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -308,7 +312,7 @@ class DashboardScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppTheme.textPrimary,
               ),
             ),
           ),

@@ -55,7 +55,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                   const FaIcon(FontAwesomeIcons.chartLine, color: AppTheme.primaryNeon, size: 24),
                   const SizedBox(width: 12),
                   Text(
-                    'Publication Trends',
+                    'Research Insights & Analytics',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -64,7 +64,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Yearly growth trends of publications',
+                'Visualizing ecosystem growth trends, keywords, and author impact',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 24),
@@ -281,7 +281,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Diagram metadata header
-          _buildDiagramHeader(title: 'Publication Trend', topic: keyword),
+          _buildDiagramHeader(title: 'Ecosystem Flux', topic: 'Multi-dimensional analysis of research velocity'),
           const SizedBox(height: 16),
 
           // Peak Year Card
@@ -311,7 +311,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                       Text(
                         '$peakYear ($maxCount publications)',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppTheme.textPrimary,
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
@@ -417,7 +417,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDiagramHeader(title: 'Top Research Journals', topic: keyword),
+          _buildDiagramHeader(title: 'Research Frontiers Discovery', topic: 'Identifying high velocity and growing keywords'),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
@@ -466,7 +466,11 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                                     name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: AppTheme.textPrimary,
+                                    ),
                                   ),
                                 ),
                                 Text(
@@ -524,7 +528,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDiagramHeader(title: 'Author Impact', topic: keyword),
+          _buildDiagramHeader(title: 'Author & Collaboration Analytics', topic: 'Top authors by citation volume and publication index'),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
@@ -552,7 +556,11 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                                     name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: AppTheme.textPrimary,
+                                    ),
                                   ),
                                 ),
                                 Text(
