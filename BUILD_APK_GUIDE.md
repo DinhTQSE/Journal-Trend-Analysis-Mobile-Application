@@ -7,7 +7,7 @@ Tài liệu này hướng dẫn chi tiết các bước chuẩn bị, cấu hìn
 ## 📋 1. Chuẩn Bị Trước Khi Build
 
 1.  **Flutter SDK**: Đảm bảo máy tính đã cài đặt Flutter (phiên bản khuyến nghị: `3.22.0` trở lên, máy hiện tại đang chạy `3.44.2`).
-2.  **Android SDK**: Cài đặt đầy đủ Android SDK Platform và Build-tools (thông qua Android Studio).
+2.  **  **: Cài đặt đầy đủ Android SDK Platform và Build-tools (thông qua Android Studio).
 3.  **Đường dẫn Flutter**: Nếu terminal chưa nhận diện lệnh `flutter`, hãy thay thế bằng đường dẫn tuyệt đối đến tệp thực thi của Flutter trên máy của bạn (Ví dụ: `D:\flutter\bin\flutter.bat`).
 
 ---
