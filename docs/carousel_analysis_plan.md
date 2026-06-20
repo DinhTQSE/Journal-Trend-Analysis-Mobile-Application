@@ -1,6 +1,6 @@
 # Implementation Plan: Swipable Diagrams in Trend Analysis Screen
 
-This document outlines the detailed design and implementation roadmap to add a swipable carousel interface for the Trend Analysis screen. The carousel will show three interactive diagrams sequentially (1, 3, and 7) based on the project requirements and OpenAlex API capabilities.
+This document outlines the detailed design and implementation roadmap to add a swipable carousel interface for the Trend Analysis screen. The carousel will show three interactive diagrams sequentially (1, 3, and 7) based on the project requirements and OpenAlex API capabilities and availability.    
 
 ---
 
